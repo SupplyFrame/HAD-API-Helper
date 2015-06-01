@@ -1,0 +1,21 @@
+{
+  "name": "hackaday-api-node-example",
+  "private": true,
+  "version": "0.0.0",
+  "description": "Example calls and oAuth for HAD API (dev.hackaday.io)",
+  "repository": "~~~~~fill this in~~~~~~",
+  "license": "MIT",
+  "scripts": {
+    "prestart": "npm install",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "async": "^1.0.0",
+    "chai": "^2.3.0",
+    "express": "^4.12.3",
+    "lodash": "^3.9.3",
+    "mocha": "^2.2.5",
+    "request": "^2.55.0",
+    "superagent": "^1.2.0"
+  }
+}
