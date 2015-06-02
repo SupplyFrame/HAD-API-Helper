@@ -1,103 +1,43 @@
-var superagent = require('superagent'),
-    expect = require('chai').expect,
-    hadApi = require('../hadapihelper.js');
+var hadApi = require('../hadapihelper.js');
 
 // Set Client Data Here:
 hadApi.setClientData({
-    id: null,
-    secret: null,
-    key: null
+    id: 'null',
+    secret: 'null',
+    key: 'hLqiXyoKKbEznWnb'
 });
 
-var clientData = hadApi.getClientData(),
-    apiUrl = hadApi.getApiUrl(),
-    clientId = clientData.id,
-    clientSecret = clientData.secret,
-    apiKey = clientData.key,
-    apiParam = hadApi.getApiKeyAsParam();
-
-function compareResponses (directResponseBody, hadApiHelperResponseBody) {
-    var directResponseObj, hadApiHelperResponseObj;
-
-    directResponseObj = (typeof directResponseBody === 'string') 
-                            ? JSON.parse(directResponseBody) 
-                            : directResponseBody;
-
-    hadApiHelperResponseObj = (typeof hadApiHelperResponseBody === 'string') 
-                            ? JSON.parse(hadApiHelperResponseBody) 
-                            : hadApiHelperResponseBody;
-
-    expect(directResponseObj).to.deep.equal(hadApiHelperResponseObj);
-}
-
+var apiUrl = hadApi.getApiUrl(),
+    apiParam = hadApi.getApiKeyAsParam(),
+    compareCalls = require('./utils.js').compareCalls;
 
 describe('GET Projects functions', function() {
     describe('.getProjects', function() {
+        this.timeout(5000);
         // test normal GET
         it('GET works', function(done) {
             var directUrl = apiUrl + '/projects' + apiParam,
                 helperArgs = null;
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjects(function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjects, [helperArgs], done);
         });
         // test GET with page #
         it('GET with page # works', function(done) {
             var directUrl = apiUrl + '/projects' + apiParam + '&page=2',
                 helperArgs = { page: 2 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjects(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjects, [helperArgs], done);
         });
         // test GET with pagination
         it('GET with pagination works', function(done) {
             var directUrl = apiUrl + '/projects' + apiParam + '&per_page=5',
                 helperArgs = { perPage: 5 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjects(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjects, [helperArgs], done);
         });
         // test GET with all sortby
         it('GET with sortby works', function(done) {
             var directUrl = apiUrl + '/projects' + apiParam + '&sortby=skulls',
                 helperArgs = { sortby: 'skulls' };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjects(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjects, [helperArgs], done);
         });
-            this.timeout(5000);
     });
     describe('.getProject', function() {
         // test normal GET
@@ -105,18 +45,7 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProject(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProject, [id], done);
         });
     });
     describe('.getProjectTeam', function() {
@@ -125,36 +54,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/team' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectTeam(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectTeam, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/team' + apiParam + '&sortby=newest',
                 id = 46,
                 options = {sortby: 'newest'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectTeam(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectTeam, [id, options], done);
         });
     });
     describe('.getProjectFollowers', function() {
@@ -163,36 +70,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/followers' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectFollowers(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectFollowers, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/followers' + apiParam + '&sortby=followers',
                 id = 46,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectFollowers(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectFollowers, [id, options], done);
         });
     });
     describe('.getProjectSkulls', function() {
@@ -201,36 +86,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/skulls' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectSkulls(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectSkulls, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/skulls' + apiParam + '&sortby=followers',
                 id = 46,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectSkulls(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectSkulls, [id, options], done);
         });
     });
     describe('.getProjectComments', function() {
@@ -239,36 +102,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/comments' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectComments(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectComments, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/comments' + apiParam + '&sortby=followers',
                 id = 46,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectComments(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectComments, [id, options], done);
         });
     });
     describe('.getProjectTags', function() {
@@ -277,36 +118,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/tags' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectTags(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectTags, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/tags' + apiParam + '&sortby=followers',
                 id = 46,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectTags(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectTags, [id, options], done);
         });
     });
     describe('.getProjectImages', function() {
@@ -315,36 +134,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/images' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectImages(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectImages, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/images' + apiParam + '&sortby=followers',
                 id = 46,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectImages(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectImages, [id, options], done);
         });
     });
     describe('.getProjectLinks', function() {
@@ -353,36 +150,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/links' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectLinks(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectLinks, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/links' + apiParam + '&sortby=followers',
                 id = 46,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectLinks(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectLinks, [id, options], done);
         });
     });
     describe('.getProjectComponents', function() {
@@ -391,36 +166,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/components' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectComponents(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectComponents, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/components' + apiParam + '&sortby=followers',
                 id = 46,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectComponents(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectComponents, [id, options], done);
         });
     });
     describe('.getProjectLogs', function() {
@@ -429,36 +182,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/logs' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectLogs(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectLogs, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/logs' + apiParam + '&sortby=followers',
                 id = 46,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectLogs(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectLogs, [id, options], done);
         });
     });
     describe('.getProjectInstructions', function() {
@@ -467,36 +198,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/instructions' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectInstructions(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectInstructions, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/instructions' + apiParam + '&sortby=followers',
                 id = 46,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectInstructions(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectInstructions, [id, options], done);
         });
     });
     describe('.getProjectDetails', function() {
@@ -505,36 +214,14 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/details' + apiParam,
                 id = 46;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectDetails(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectDetails, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/46/details' + apiParam + '&sortby=followers',
                 id = 46,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectDetails(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectDetails, [id, options], done);
         });
     });
     describe('.getProjectsRange', function() {
@@ -543,35 +230,13 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/range' + apiParam + '&ids=50,100',
                 options = { ids: [50, 100] };
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectsRange(options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectsRange, [options], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/range' + apiParam + '&ids=50,100&sortby=skulls',
                 options = { ids: [50, 100], sortby: 'skulls' };
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectsRange(options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectsRange, [options], done);
         });
     });
     describe('.getProjectsBatch', function() {
@@ -580,35 +245,13 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/batch' + apiParam + '&ids=100,450,850',
                 options = { ids: [100, 450, 850] };
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectsBatch(options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectsBatch, [options], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/batch' + apiParam + '&ids=100,450,850&sortby=followers',
                 options = { ids: [100, 450, 850], sortby: 'followers' };
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getProjectsBatch(options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getProjectsBatch, [options], done);
         });
     });
     describe('.projectsSearch', function() {
@@ -617,18 +260,7 @@ describe('GET Projects functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/projects/search' + apiParam + '&search_term=arduino',
                 options = { searchTerm: 'arduino' };
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.projectsSearch(options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.projectsSearch, [options], done);
         });
     });
 });
@@ -638,65 +270,25 @@ describe('GET Users functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/users' + apiParam,
                 helperArgs = null;
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUsers(function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUsers, helperArgs, done);
         });
         // test GET with page #
         it('GET with page # works', function(done) {
             var directUrl = apiUrl + '/users' + apiParam + '&page=2',
                 helperArgs = { page: 2 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUsers(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUsers, helperArgs, done);
         });
         // test GET with pagination
         it('GET with pagination works', function(done) {
             var directUrl = apiUrl + '/users' + apiParam + '&per_page=5',
                 helperArgs = { perPage: 5 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUsers(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUsers, helperArgs, done);
         });
         // test GET with all sortby
         it('GET with sortby works', function(done) {
             var directUrl = apiUrl + '/users' + apiParam + '&sortby=skulls',
                 helperArgs = { sortby: 'skulls' };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUsers(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUsers, helperArgs, done);
         });
             this.timeout(5000);
     });
@@ -706,18 +298,7 @@ describe('GET Users functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1' + apiParam,
                 id = 1;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUser(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUser, [id], done);
         });
     });
     describe('.getUserFollowing', function() {
@@ -726,36 +307,14 @@ describe('GET Users functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/following' + apiParam,
                 id = 1;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserFollowing(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserFollowing, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/following' + apiParam + '&sortby=newest',
                 id = 1,
                 options = {sortby: 'newest'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserFollowing(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserFollowing, [id, options], done);
         });
     });
     describe('.getUserFollowers', function() {
@@ -764,36 +323,14 @@ describe('GET Users functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/followers' + apiParam,
                 id = 1;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserFollowers(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserFollowers, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/followers' + apiParam + '&sortby=followers',
                 id = 1,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserFollowers(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserFollowers, [id, options], done);
         });
     });
     describe('.getUserSkulls', function() {
@@ -802,36 +339,14 @@ describe('GET Users functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/skulls' + apiParam,
                 id = 1;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserSkulls(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserSkulls, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/skulls' + apiParam + '&sortby=followers',
                 id = 1,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserSkulls(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserSkulls, [id, options], done);
         });
     });
     describe('.getUserPages', function() {
@@ -840,36 +355,14 @@ describe('GET Users functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/pages' + apiParam,
                 id = 1;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserPages(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserPages, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/pages' + apiParam + '&sortby=followers',
                 id = 1,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserPages(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserPages, [id, options], done);
         });
     });
     describe('.getUserTags', function() {
@@ -878,36 +371,14 @@ describe('GET Users functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/tags' + apiParam,
                 id = 1;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserTags(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserTags, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/tags' + apiParam + '&sortby=followers',
                 id = 1,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserTags(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserTags, [id, options], done);
         });
     });
     describe('.getUserLinks', function() {
@@ -916,36 +387,14 @@ describe('GET Users functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/links' + apiParam,
                 id = 1;
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserLinks(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserLinks, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/1/links' + apiParam + '&sortby=followers',
                 id = 1,
                 options = {sortby: 'followers'};
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserLinks(id, options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserLinks, [id, options], done);
         });
     });
     describe('.getUsersRange', function() {
@@ -954,35 +403,13 @@ describe('GET Users functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/range' + apiParam + '&ids=50,100',
                 options = { ids: [50, 100] };
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUsersRange(options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUsersRange, [options], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/range' + apiParam + '&ids=50,100&sortby=skulls',
                 options = { ids: [50, 100], sortby: 'skulls' };
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUsersRange(options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUsersRange, [options], done);
         });
     });
     describe('.getUsersBatch', function() {
@@ -991,35 +418,13 @@ describe('GET Users functions', function() {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/batch' + apiParam + '&ids=100,450,850',
                 options = { ids: [100, 450, 850] };
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUsersBatch(options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUsersBatch, [options], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
             var directUrl = apiUrl + '/users/batch' + apiParam + '&ids=100,450,850&sortby=followers',
                 options = { ids: [100, 450, 850], sortby: 'followers' };
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUsersBatch(options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUsersBatch, [options], done);
         });
     });
     describe('.usersSearch', function() {
@@ -1028,18 +433,7 @@ describe('GET Users functions', function() {
             this.timeout(20000);
             var directUrl = apiUrl + '/users/search' + apiParam + '&search_term=3d',
                 options = { searchTerm: '3d' };
-            console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.usersSearch(options, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.usersSearch, [options], done);
         });
     });
 });
@@ -1049,17 +443,7 @@ describe('GET Search functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/search' + apiParam + '&search_term=orange',
                 helperArgs = { searchTerm: 'orange' };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.search(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.search, [helperArgs], done);
         });
     });
 });
@@ -1069,19 +453,7 @@ describe('GET Comment functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/comments/users/1' + apiParam,
                 id = 1;
-                console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getUserComments(id, function (error, responseData) {
-                            console.log(error)
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getUserComments, [id], done);
         });
     });
     describe('.getLogComments', function() {
@@ -1089,19 +461,7 @@ describe('GET Comment functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/comments/logs/460' + apiParam,
                 id = 460;
-                console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getLogComments(id, function (error, responseData) {
-                            console.log(error)
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getLogComments, [id], done);
         });
     });
     describe('.getInstructionComments', function() {
@@ -1109,19 +469,7 @@ describe('GET Comment functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/comments/instructions/1500' + apiParam,
                 id = 1500;
-                console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getInstructionComments(id, function (error, responseData) {
-                            console.log(error)
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getInstructionComments, [id], done);
         });
     });
     describe('.getContestComments', function() {
@@ -1129,19 +477,7 @@ describe('GET Comment functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/comments/contests/3432' + apiParam,
                 id = 3432;
-                console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getContestComments(id, function (error, responseData) {
-                            console.log(error)
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getContestComments, [id], done);
         });
     });
     describe('.getEventComments', function() {
@@ -1149,19 +485,7 @@ describe('GET Comment functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/comments/events/3178' + apiParam,
                 id = 3178;
-                console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getEventComments(id, function (error, responseData) {
-                            console.log(error)
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getEventComments, [id], done);
         });
     });
     describe('.getHackerspaceComments', function() {
@@ -1169,19 +493,7 @@ describe('GET Comment functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/comments/hackerspaces/722' + apiParam,
                 id = 722;
-                console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getHackerspaceComments(id, function (error, responseData) {
-                            console.log(error)
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getHackerspaceComments, [id], done);
         });
     });
     describe('.getStackComments', function() {
@@ -1189,19 +501,7 @@ describe('GET Comment functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/comments/stack/997' + apiParam,
                 id = 997;
-                console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getStackComments(id, function (error, responseData) {
-                            console.log(error)
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getStackComments, [id], done);
         });
     });
 });
@@ -1210,34 +510,12 @@ describe('GET Feed functions', function() {
         // test normal GET
         it('GET works', function(done) {
             var directUrl = apiUrl + '/feeds/global' + apiParam;
-                console.log(directUrl);
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getFeed(function (error, responseData) {
-                            console.log(error)
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getFeed, null, done);
         });
         it('GET with page # works', function(done) {
             var directUrl = apiUrl + '/feeds/global/' + apiParam + '&page=2',
                 helperArgs = { page: 2 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getFeed(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getFeed, [helperArgs], done);
         });
     });
 });
@@ -1246,65 +524,25 @@ describe('GET Pages functions', function() {
         // test normal GET
         it('GET works', function(done) {
             var directUrl = apiUrl + '/pages/lists' + apiParam;
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getListPages(function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getListPages, null, done);
         });
         // test GET with page #
         it('GET with page # works', function(done) {
             var directUrl = apiUrl + '/pages/lists' + apiParam + '&page=2',
                 helperArgs = { page: 2 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getListPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getListPages, [helperArgs], done);
         });
         // test GET with pagination
         it('GET with pagination works', function(done) {
             var directUrl = apiUrl + '/pages/lists' + apiParam + '&per_page=5',
                 helperArgs = { perPage: 5 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getListPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getListPages, [helperArgs], done);
         });
         // test GET with all sortby
         it('GET with sortby works', function(done) {
             var directUrl = apiUrl + '/pages/lists' + apiParam + '&sortby=skulls',
                 helperArgs = { sortby: 'skulls' };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getListPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getListPages, [helperArgs], done);
         });
         this.timeout(5000);
     });
@@ -1313,68 +551,28 @@ describe('GET Pages functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/pages/lists/2864' + apiParam,
                 id = 2864;
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getListPage(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getListPage, [id], done);
         });
         // test GET with page #
         it('GET with page # works', function(done) {
             var directUrl = apiUrl + '/pages/lists/2864' + apiParam + '&page=2',
                 id = 2864,
                 helperArgs = { page: 2 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getListPage(id, helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getListPage, [id, helperArgs], done);
         });
         // test GET with pagination
         it('GET with pagination works', function(done) {
             var directUrl = apiUrl + '/pages/lists/2864' + apiParam + '&per_page=5',
                 id = 2864,
                 helperArgs = { perPage: 5 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getListPage(id, helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getListPage, [id, helperArgs], done);
         });
         // test GET with all sortby
         it('GET with sortby works', function(done) {
             var directUrl = apiUrl + '/pages/lists/2864' + apiParam + '&sortby=skulls',
                 id = 2864,
                 helperArgs = { sortby: 'skulls' };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getListPage(id, helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getListPage, [id, helperArgs], done);
         });
         this.timeout(5000);
     });
@@ -1382,65 +580,25 @@ describe('GET Pages functions', function() {
         // test normal GET
         it('GET works', function(done) {
             var directUrl = apiUrl + '/pages/stack' + apiParam;
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getStackPages(function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getStackPages, null, done);
         });
         // test GET with page #
         it('GET with page # works', function(done) {
             var directUrl = apiUrl + '/pages/stack' + apiParam + '&page=2',
                 helperArgs = { page: 2 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getStackPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getStackPages, [helperArgs], done);
         });
         // test GET with pagination
         it('GET with pagination works', function(done) {
             var directUrl = apiUrl + '/pages/stack' + apiParam + '&per_page=5',
                 helperArgs = { perPage: 5 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getStackPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getStackPages, [helperArgs], done);
         });
         // test GET with all sortby
         it('GET with sortby works', function(done) {
             var directUrl = apiUrl + '/pages/stack' + apiParam + '&sortby=skulls',
                 helperArgs = { sortby: 'skulls' };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getStackPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getStackPages, [helperArgs], done);
         });
         this.timeout(5000);
     });
@@ -1449,51 +607,21 @@ describe('GET Pages functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/pages/stack/917' + apiParam,
                 id = 917;
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getStackPage(id, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getStackPage, [id], done);
         });
         // test GET with page #
         it('GET with page # works', function(done) {
             var directUrl = apiUrl + '/pages/stack/917' + apiParam + '&page=2',
                 id = 917,
                 helperArgs = { page: 2 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getStackPage(id, helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getStackPage, [id, helperArgs], done);
         });
         // test GET with pagination
         it('GET with pagination works', function(done) {
             var directUrl = apiUrl + '/pages/stack/917' + apiParam + '&per_page=5',
                 id = 917,
                 helperArgs = { perPage: 5 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getStackPage(id, helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getStackPage, [id, helperArgs], done);
         });
         this.timeout(5000);
     });
@@ -1501,65 +629,25 @@ describe('GET Pages functions', function() {
         // test normal GET
         it('GET works', function(done) {
             var directUrl = apiUrl + '/pages/events' + apiParam;
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getEventPages(function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getEventPages, null, done);
         });
         // test GET with page #
         it('GET with page # works', function(done) {
             var directUrl = apiUrl + '/pages/events' + apiParam + '&page=2',
                 helperArgs = { page: 2 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getEventPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getEventPages, [helperArgs], done);
         });
         // test GET with pagination
         it('GET with pagination works', function(done) {
             var directUrl = apiUrl + '/pages/events' + apiParam + '&per_page=5',
                 helperArgs = { perPage: 5 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getEventPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getEventPages, [helperArgs], done);
         });
         // test GET with all sortby
         it('GET with sortby works', function(done) {
             var directUrl = apiUrl + '/pages/events' + apiParam + '&sortby=skulls',
                 helperArgs = { sortby: 'skulls' };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getEventPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getEventPages, [helperArgs], done);
         });
         this.timeout(5000);
     });
@@ -1567,65 +655,25 @@ describe('GET Pages functions', function() {
         // test normal GET
         it('GET works', function(done) {
             var directUrl = apiUrl + '/pages/contests' + apiParam;
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getContestPages(function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getContestPages, null, done);
         });
         // test GET with page #
         it('GET with page # works', function(done) {
             var directUrl = apiUrl + '/pages/contests' + apiParam + '&page=2',
                 helperArgs = { page: 2 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getContestPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getContestPages, [helperArgs], done);
         });
         // test GET with pagination
         it('GET with pagination works', function(done) {
             var directUrl = apiUrl + '/pages/contests' + apiParam + '&per_page=5',
                 helperArgs = { perPage: 5 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getContestPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getContestPages, [helperArgs], done);
         });
         // test GET with all sortby
         it('GET with sortby works', function(done) {
             var directUrl = apiUrl + '/pages/contests' + apiParam + '&sortby=skulls',
                 helperArgs = { sortby: 'skulls' };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getContestPages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getContestPages, [helperArgs], done);
         });
         this.timeout(5000);
     });
@@ -1633,65 +681,25 @@ describe('GET Pages functions', function() {
         // test normal GET
         it('GET works', function(done) {
             var directUrl = apiUrl + '/pages/hackerspaces' + apiParam;
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getHackerspacePages(function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getHackerspacePages, null, done);
         });
         // test GET with page #
         it('GET with page # works', function(done) {
             var directUrl = apiUrl + '/pages/hackerspaces' + apiParam + '&page=2',
                 helperArgs = { page: 2 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getHackerspacePages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getHackerspacePages, [helperArgs], done);
         });
         // test GET with pagination
         it('GET with pagination works', function(done) {
             var directUrl = apiUrl + '/pages/hackerspaces' + apiParam + '&per_page=5',
                 helperArgs = { perPage: 5 };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getHackerspacePages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getHackerspacePages, [helperArgs], done);
         });
         // test GET with all sortby
         it('GET with sortby works', function(done) {
             var directUrl = apiUrl + '/pages/hackerspaces' + apiParam + '&sortby=skulls',
                 helperArgs = { sortby: 'skulls' };
-            superagent
-                .get(directUrl)
-                .end(function (err, res) {
-                    expect(err).to.be.null;
-                    expect(res.status).to.equal(200);
-                    hadApi.getHackerspacePages(helperArgs, function (error, responseData) {
-                        expect(error).to.be.null;
-                        compareResponses(res.body, responseData);
-                        done();
-                    });
-                });
+            compareCalls(directUrl, hadApi.getHackerspacePages, [helperArgs], done);
         });
         this.timeout(5000);
     });
