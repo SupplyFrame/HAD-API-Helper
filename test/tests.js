@@ -1,7 +1,15 @@
 var superagent = require('superagent'),
     expect = require('chai').expect,
-    hadApi = require('./hadapihelper.js'),
-    clientData = hadApi.getClientData(),
+    hadApi = require('../hadapihelper.js');
+
+// Set Client Data Here:
+hadApi.setClientData({
+    id: null,
+    secret: null,
+    key: null
+});
+
+var clientData = hadApi.getClientData(),
     apiUrl = hadApi.getApiUrl(),
     clientId = clientData.id,
     clientSecret = clientData.secret,
@@ -624,7 +632,7 @@ describe('GET Projects functions', function() {
         });
     });
 });
-xdescribe('GET Users functions', function() {
+describe('GET Users functions', function() {
     describe('.getUsers', function() {
         // test normal GET
         it('GET works', function(done) {
@@ -1035,7 +1043,7 @@ xdescribe('GET Users functions', function() {
         });
     });
 });
-xdescribe('GET Search functions', function() {
+describe('GET Search functions', function() {
     describe('.search', function() {
         // test normal GET
         it('GET works', function(done) {
@@ -1055,7 +1063,7 @@ xdescribe('GET Search functions', function() {
         });
     });
 });
-xdescribe('GET Comment functions', function() {
+describe('GET Comment functions', function() {
     describe('.getUserComments', function() {
         // test normal GET
         it('GET works', function(done) {
@@ -1197,5 +1205,494 @@ xdescribe('GET Comment functions', function() {
         });
     });
 });
-
-
+describe('GET Feed functions', function() {
+    describe('.getFeed', function() {
+        // test normal GET
+        it('GET works', function(done) {
+            var directUrl = apiUrl + '/feeds/global' + apiParam;
+                console.log(directUrl);
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getFeed(function (error, responseData) {
+                            console.log(error)
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        it('GET with page # works', function(done) {
+            var directUrl = apiUrl + '/feeds/global/' + apiParam + '&page=2',
+                helperArgs = { page: 2 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getFeed(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+    });
+});
+describe('GET Pages functions', function() {
+    describe('.getListPages', function() {
+        // test normal GET
+        it('GET works', function(done) {
+            var directUrl = apiUrl + '/pages/lists' + apiParam;
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getListPages(function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with page #
+        it('GET with page # works', function(done) {
+            var directUrl = apiUrl + '/pages/lists' + apiParam + '&page=2',
+                helperArgs = { page: 2 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getListPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with pagination
+        it('GET with pagination works', function(done) {
+            var directUrl = apiUrl + '/pages/lists' + apiParam + '&per_page=5',
+                helperArgs = { perPage: 5 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getListPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with all sortby
+        it('GET with sortby works', function(done) {
+            var directUrl = apiUrl + '/pages/lists' + apiParam + '&sortby=skulls',
+                helperArgs = { sortby: 'skulls' };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getListPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        this.timeout(5000);
+    });
+    describe('.getListPage', function() {
+        // test normal GET
+        it('GET works', function(done) {
+            var directUrl = apiUrl + '/pages/lists/2864' + apiParam,
+                id = 2864;
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getListPage(id, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with page #
+        it('GET with page # works', function(done) {
+            var directUrl = apiUrl + '/pages/lists/2864' + apiParam + '&page=2',
+                id = 2864,
+                helperArgs = { page: 2 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getListPage(id, helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with pagination
+        it('GET with pagination works', function(done) {
+            var directUrl = apiUrl + '/pages/lists/2864' + apiParam + '&per_page=5',
+                id = 2864,
+                helperArgs = { perPage: 5 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getListPage(id, helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with all sortby
+        it('GET with sortby works', function(done) {
+            var directUrl = apiUrl + '/pages/lists/2864' + apiParam + '&sortby=skulls',
+                id = 2864,
+                helperArgs = { sortby: 'skulls' };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getListPage(id, helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        this.timeout(5000);
+    });
+    describe('.getStackPages', function() {
+        // test normal GET
+        it('GET works', function(done) {
+            var directUrl = apiUrl + '/pages/stack' + apiParam;
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getStackPages(function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with page #
+        it('GET with page # works', function(done) {
+            var directUrl = apiUrl + '/pages/stack' + apiParam + '&page=2',
+                helperArgs = { page: 2 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getStackPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with pagination
+        it('GET with pagination works', function(done) {
+            var directUrl = apiUrl + '/pages/stack' + apiParam + '&per_page=5',
+                helperArgs = { perPage: 5 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getStackPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with all sortby
+        it('GET with sortby works', function(done) {
+            var directUrl = apiUrl + '/pages/stack' + apiParam + '&sortby=skulls',
+                helperArgs = { sortby: 'skulls' };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getStackPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        this.timeout(5000);
+    });
+    describe('.getStackPage', function() {
+        // test normal GET
+        it('GET works', function(done) {
+            var directUrl = apiUrl + '/pages/stack/917' + apiParam,
+                id = 917;
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getStackPage(id, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with page #
+        it('GET with page # works', function(done) {
+            var directUrl = apiUrl + '/pages/stack/917' + apiParam + '&page=2',
+                id = 917,
+                helperArgs = { page: 2 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getStackPage(id, helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with pagination
+        it('GET with pagination works', function(done) {
+            var directUrl = apiUrl + '/pages/stack/917' + apiParam + '&per_page=5',
+                id = 917,
+                helperArgs = { perPage: 5 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getStackPage(id, helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        this.timeout(5000);
+    });
+    describe('.getEventPages', function() {
+        // test normal GET
+        it('GET works', function(done) {
+            var directUrl = apiUrl + '/pages/events' + apiParam;
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getEventPages(function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with page #
+        it('GET with page # works', function(done) {
+            var directUrl = apiUrl + '/pages/events' + apiParam + '&page=2',
+                helperArgs = { page: 2 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getEventPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with pagination
+        it('GET with pagination works', function(done) {
+            var directUrl = apiUrl + '/pages/events' + apiParam + '&per_page=5',
+                helperArgs = { perPage: 5 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getEventPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with all sortby
+        it('GET with sortby works', function(done) {
+            var directUrl = apiUrl + '/pages/events' + apiParam + '&sortby=skulls',
+                helperArgs = { sortby: 'skulls' };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getEventPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        this.timeout(5000);
+    });
+    describe('.getContestPages', function() {
+        // test normal GET
+        it('GET works', function(done) {
+            var directUrl = apiUrl + '/pages/contests' + apiParam;
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getContestPages(function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with page #
+        it('GET with page # works', function(done) {
+            var directUrl = apiUrl + '/pages/contests' + apiParam + '&page=2',
+                helperArgs = { page: 2 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getContestPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with pagination
+        it('GET with pagination works', function(done) {
+            var directUrl = apiUrl + '/pages/contests' + apiParam + '&per_page=5',
+                helperArgs = { perPage: 5 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getContestPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with all sortby
+        it('GET with sortby works', function(done) {
+            var directUrl = apiUrl + '/pages/contests' + apiParam + '&sortby=skulls',
+                helperArgs = { sortby: 'skulls' };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getContestPages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        this.timeout(5000);
+    });
+    describe('.getHackerspacePages', function() {
+        // test normal GET
+        it('GET works', function(done) {
+            var directUrl = apiUrl + '/pages/hackerspaces' + apiParam;
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getHackerspacePages(function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with page #
+        it('GET with page # works', function(done) {
+            var directUrl = apiUrl + '/pages/hackerspaces' + apiParam + '&page=2',
+                helperArgs = { page: 2 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getHackerspacePages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with pagination
+        it('GET with pagination works', function(done) {
+            var directUrl = apiUrl + '/pages/hackerspaces' + apiParam + '&per_page=5',
+                helperArgs = { perPage: 5 };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getHackerspacePages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        // test GET with all sortby
+        it('GET with sortby works', function(done) {
+            var directUrl = apiUrl + '/pages/hackerspaces' + apiParam + '&sortby=skulls',
+                helperArgs = { sortby: 'skulls' };
+            superagent
+                .get(directUrl)
+                .end(function (err, res) {
+                    expect(err).to.be.null;
+                    expect(res.status).to.equal(200);
+                    hadApi.getHackerspacePages(helperArgs, function (error, responseData) {
+                        expect(error).to.be.null;
+                        compareResponses(res.body, responseData);
+                        done();
+                    });
+                });
+        });
+        this.timeout(5000);
+    });
+});
