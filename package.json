@@ -1,9 +1,11 @@
 {
-  "name": "hackaday-api-node-example",
-  "private": true,
-  "version": "0.0.0",
+  "name": "hackaday-api-helper",
+  "version": "0.0.1",
   "description": "Example calls and oAuth for HAD API (dev.hackaday.io)",
-  "repository": "~~~~~fill this in~~~~~~",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SupplyFrame/had-api-helper"
+  },
   "license": "MIT",
   "scripts": {
     "prestart": "npm install",
@@ -18,5 +20,20 @@
     "async": "^1.0.0",
     "lodash": "^3.9.3",
     "request": "^2.55.0"
-  }
+  },
+  "main": "hadapihelper.js",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "hackaday",
+    "hackaday.io",
+    "had",
+    "hackaday.com",
+    "had",
+    "api",
+    "hackaday",
+    "api"
+  ],
+  "author": "Amar Patel <amarpatel@berkeley.edu> (http://www.amarpatel.io/)"
 }
