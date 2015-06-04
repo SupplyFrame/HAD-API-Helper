@@ -18,8 +18,12 @@ utils.compareResponses =  function (directResponseBody, hadApiHelperResponseBody
 };
 
 
-utils.compareCalls = function (rawQuery, hadApiFunc, hadAPiFuncArgs, done) {
-    hadAPiFuncArgs = hadAPiFuncArgs || [];
+utils.compareCalls = function (rawQuery, hadApiFunc, hadApiFuncArgs, done) {
+    hadApiFuncArgs = hadApiFuncArgs || [];
+
+    if (!Array.isArray(hadApiFuncArgs)) {
+        hadApiFuncArgs = [hadApiFuncArgs];
+    }
 
     superagent
         .get(rawQuery)
@@ -32,8 +36,8 @@ utils.compareCalls = function (rawQuery, hadApiFunc, hadAPiFuncArgs, done) {
                 utils.compareResponses(res.body, responseData);
                 done();
             };
-            hadAPiFuncArgs.push(cb);
-            hadApiFunc.apply(hadApi, hadAPiFuncArgs);
+            hadApiFuncArgs.push(cb);
+            hadApiFunc.apply(hadApi, hadApiFuncArgs);
         });
 };
 
