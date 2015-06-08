@@ -2,13 +2,11 @@ var hadApi = require('../hadapihelper.js');
 
 TRAVIS_SECURE_ENV_VARS = true;
 
-console.log(process.env);
-
 // Set Client Data Here:
 hadApi.setClientData({
     id: 'null',
     secret: 'null',
-    key: process.env.secure || null
+    key: process.env.travis || null
 });
 
 var apiUrl = hadApi.getApiUrl(),
