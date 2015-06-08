@@ -2,11 +2,13 @@ var hadApi = require('../hadapihelper.js');
 
 TRAVIS_SECURE_ENV_VARS = true;
 
+console.log(process.env);
+
 // Set Client Data Here:
 hadApi.setClientData({
     id: 'null',
     secret: 'null',
-    key: env.matrix || null
+    key: process.env.secure || null
 });
 
 var apiUrl = hadApi.getApiUrl(),
@@ -20,6 +22,7 @@ describe('GET Projects functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/projects' + apiParam,
                 helperArgs = null;
+            console.log(directUrl);
             compareCalls(directUrl, hadApi.getProjects, [helperArgs], done);
         });
         // test GET with page #
