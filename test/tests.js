@@ -1,10 +1,12 @@
 var hadApi = require('../hadapihelper.js');
 
+TRAVIS_SECURE_ENV_VARS = true;
+
 // Set Client Data Here:
 hadApi.setClientData({
     id: 'null',
     secret: 'null',
-    key: 'hLqiXyoKKbEznWnb'
+    key: env.matrix || null
 });
 
 var apiUrl = hadApi.getApiUrl(),
@@ -212,14 +214,14 @@ describe('GET Projects functions', function() {
         // test normal GET
         it('GET works', function(done) {
             this.timeout(5000);
-            var directUrl = apiUrl + '/projects/46/details' + apiParam,
-                id = 46;
+            var directUrl = apiUrl + '/projects/1340/details' + apiParam,
+                id = 1340;
             compareCalls(directUrl, hadApi.getProjectDetails, [id], done);
         });
         it('GET sortby works', function(done) {
             this.timeout(5000);
-            var directUrl = apiUrl + '/projects/46/details' + apiParam + '&sortby=followers',
-                id = 46,
+            var directUrl = apiUrl + '/projects/1340/details' + apiParam + '&sortby=followers',
+                id = 1340,
                 options = {sortby: 'followers'};
             compareCalls(directUrl, hadApi.getProjectDetails, [id, options], done);
         });
@@ -268,29 +270,32 @@ describe('GET Users functions', function() {
     describe('.getUsers', function() {
         // test normal GET
         it('GET works', function(done) {
+            this.timeout(5000);
             var directUrl = apiUrl + '/users' + apiParam,
                 helperArgs = null;
             compareCalls(directUrl, hadApi.getUsers, helperArgs, done);
         });
         // test GET with page #
         it('GET with page # works', function(done) {
+            this.timeout(5000);
             var directUrl = apiUrl + '/users' + apiParam + '&page=2',
                 helperArgs = { page: 2 };
             compareCalls(directUrl, hadApi.getUsers, helperArgs, done);
         });
         // test GET with pagination
         it('GET with pagination works', function(done) {
+            this.timeout(5000);
             var directUrl = apiUrl + '/users' + apiParam + '&per_page=5',
                 helperArgs = { perPage: 5 };
             compareCalls(directUrl, hadApi.getUsers, helperArgs, done);
         });
         // test GET with all sortby
         it('GET with sortby works', function(done) {
+            this.timeout(5000);
             var directUrl = apiUrl + '/users' + apiParam + '&sortby=skulls',
                 helperArgs = { sortby: 'skulls' };
             compareCalls(directUrl, hadApi.getUsers, helperArgs, done);
         });
-            this.timeout(5000);
     });
     describe('.getUser', function() {
         // test normal GET
