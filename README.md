@@ -1,5 +1,4 @@
-#HAD-API-Helper
-
+#HAD-API-Helper ![Build Status](https://travis-ci.org/SupplyFrame/HAD-API-Helper.svg?branch=master)
 
 Accepts 
 

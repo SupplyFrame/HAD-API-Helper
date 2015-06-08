@@ -20,7 +20,6 @@ describe('GET Projects functions', function() {
         it('GET works', function(done) {
             var directUrl = apiUrl + '/projects' + apiParam,
                 helperArgs = null;
-            console.log(directUrl);
             compareCalls(directUrl, hadApi.getProjects, [helperArgs], done);
         });
         // test GET with page #
